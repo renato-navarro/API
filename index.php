@@ -3,20 +3,17 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
 $json = file_get_contents("php://input");
 $data = json_decode($json, true);
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-
     // Token da API
     $apiKey = $data['apikey'];
     unset($data['apikey']);
 
     // URL da API Monday
     $url = 'https://api.monday.com/v2';
+    $quadroid = $data['quadroid']; // A variável já está definida aqui.
 
     // JSON dos valores das colunas
     $columnValuesJson = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
@@ -25,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mutation = '
     mutation {
       create_item(
-        board_id: 9751681808,
+        board_id: ' . $quadroid . ',
         group_id: "topics",
         item_name: "Novo item via API",
         column_values: "' . addslashes($columnValuesJson) . '"
@@ -50,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $response = curl_exec($ch);
     curl_close($ch);
-
 
     echo $response;
 } else {
